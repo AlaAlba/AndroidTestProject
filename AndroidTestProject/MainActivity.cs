@@ -28,25 +28,71 @@ namespace AndroidTestProject
 
             Button btn = (Button)FindViewById(Resource.Id.button1);
             btn.Click += Btn_Click;
+
+            RadioGroup rg = (RadioGroup)FindViewById(Resource.Id.radioGroup1);
+            rg.CheckedChange += Rg_CheckedChange;
         }
 
+
         /// <summary>
-        /// ボタンクリックイベント
+        /// ボタンクリックイベントでトースト表示
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Btn_Click(object sender, EventArgs e)
         {
             try{
+                //トースト表示中なら表示を一旦キャンセルする（連打対応）
                 if (t != null){
                     t.Cancel();
                 }
 
+                //トースト表示
                 t = Toast.MakeText(this, "Hello,Xamarin.Android", ToastLength.Long);
 
                 t.Show();
             }
             catch(Exception ex){
+                Console.Write("例外発生" + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// ラジオグループ内のチェックが変更されたときのイベントでトースト表示
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Rg_CheckedChange(object sender, RadioGroup.CheckedChangeEventArgs e)
+        {
+            //選択されたラジオグループのオブジェクトを取得
+            RadioGroup rg = (RadioGroup)sender;
+            
+            //チェックされたラジオボタンのid値を取得
+            int rbId = rg.CheckedRadioButtonId;
+
+            //チェックされたラジオボタンを取得
+            RadioButton rb = (RadioButton)FindViewById(rbId);
+            
+            //チェックされたラジオボタンのid名を取得（String.xmlで記載したid名を取得）
+            String rbResoueceIdName = Resources.GetResourceEntryName(rbId);
+
+            try
+            {
+                //トースト表示中なら表示を一旦キャンセルする（連打対応）
+                if (t != null)
+                {
+                    t.Cancel();
+                }
+
+                //トースト表示
+                t = Toast.MakeText(this, "CheckedText: " + rb.Text.ToString() 
+                    + ",\r\n ID名: " + rbResoueceIdName.ToString() 
+                    + ",\r\n ID値: " + rb.Id.ToString() , ToastLength.Long);
+
+                t.Show();
+            }
+            catch (Exception ex)
+            {
                 Console.Write("例外発生" + ex.ToString());
             }
         }
